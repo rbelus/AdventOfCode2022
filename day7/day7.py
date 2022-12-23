@@ -17,7 +17,7 @@ def FindParent(parentDict, subDict):
 	for k,v in parentDict.items():
 		if isinstance(v, dict):
 			if subDict == v:
-				print("Found", k, parentDict)
+				#print("Found", k, parentDict)
 				return parentDict
 			else:
 				ret = FindParent(v, subDict)
@@ -59,7 +59,7 @@ for line in input.readlines():
 		parentDir[file] = size
 	# print(fileSystemDict, parentDir)
 
-print(fileSystemDict)
+#print(fileSystemDict)
 
 # Parse dict and get size of dirs.
 def GetDirSize(dirDict, allSmallDirs = None):
@@ -74,8 +74,8 @@ def GetDirSize(dirDict, allSmallDirs = None):
 		elif k != 'PARENT':
 			fileSize = int(v)
 			myDirSize += fileSize
-			print("Adding file ", k, v, dirDict["PARENT"], myDirSize)
-	print("DirSize of ", dirDict["PARENT"], myDirSize)
+			#print("Adding file ", k, v, dirDict["PARENT"], myDirSize)
+	#print("DirSize of ", dirDict["PARENT"], myDirSize)
 	return myDirSize, smallDirs
 
 allSmallDirs = []
@@ -86,3 +86,32 @@ for dir in allSmallDirs:
 	totalSmallSize += GetDirSize(dir)[0]
 
 print(totalSmallSize)
+
+
+# 2nd part
+diskSize = 		70000000
+updateSize = 	30000000
+currentSpace = diskSize - totalSize
+sizeToFree = updateSize - currentSpace
+#print(diskSize, updateSize, currentSpace, sizeToFree)
+
+# Parse dict and get size of dirs, store very large dir
+def GetDirSize2(dirDict, allBigDirs = None):
+	myDirSize = 0
+	bigDirs = allBigDirs
+	for k,v in dirDict.items():
+		if isinstance(v, dict):
+			subDirSize, bigDirs = GetDirSize2(v, bigDirs)
+			myDirSize += subDirSize
+			if subDirSize >= sizeToFree and allBigDirs != None:
+				bigDirs.append((v, subDirSize))
+		elif k != 'PARENT':
+			fileSize = int(v)
+			myDirSize += fileSize
+	return myDirSize, bigDirs
+
+bigDirs = []
+_,bigDirs = GetDirSize2(fileSystemDict['/'], bigDirs)
+
+bigDirs.sort(key=lambda x: x[1])
+print(bigDirs[0][1])
