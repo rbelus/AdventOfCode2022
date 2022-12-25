@@ -1,8 +1,10 @@
 import os
 import regex
+import math
 
 class Monkey:
 	monkeys = []
+	gcd = 0
 
 	def __init__(self, id, items, worryIncrease, test, trueCase, falseCase):
 		self.id = id
@@ -21,7 +23,7 @@ class Monkey:
 
 	def Inspect(self, item):
 		self.inspected += 1
-		return int(self.worryIncrease(item) / 3)
+		return int(self.worryIncrease(item) % self.gcd)
 
 	def Throw(self, item):
 		if item % self.test == 0:
@@ -91,6 +93,10 @@ while True:
 	# Create monkey
 	Monkey.monkeys.append(Monkey(mId, items, worryIncrease, test, true, false))
 
+Monkey.gcd = 1
+for monkey in Monkey.monkeys:
+	Monkey.gcd *= monkey.test
+
 for rounds in range(20):
 	for monkey in Monkey.monkeys:
 		monkey.Turn()
@@ -101,3 +107,16 @@ for monkey in Monkey.monkeys:
 
 inspectCounters.sort(reverse=True)
 print(inspectCounters[0]*inspectCounters[1])
+
+#2nd part
+for rounds in range(9980):
+	for monkey in Monkey.monkeys:
+		monkey.Turn()
+
+inspectCounters = []
+for monkey in Monkey.monkeys:
+	inspectCounters.append(monkey.inspected)
+
+inspectCounters.sort(reverse=True)
+print(inspectCounters[0]*inspectCounters[1])
+
